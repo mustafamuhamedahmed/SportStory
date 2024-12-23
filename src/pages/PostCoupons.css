@@ -1,0 +1,98 @@
+/* تنسيق صفحة الكوبونات */
+.post-coupons {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* العنوان الرئيسي */
+  h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  /* تنسيق أقسام إضافة الكوبون والكوبونات */
+  .add-coupon-section, .coupons-list-section {
+    margin-bottom: 40px;
+  }
+  
+  /* عنوان القسم */
+  h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  /* تنسيق النموذج */
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border 0.3s;
+  }
+  
+  input:focus {
+    border-color: #007bff;
+  }
+  
+  /* تنسيق الرسائل الخطأ */
+  .error-message {
+    color: red;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  /* تنسيق الجدول */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+  }
+  
+  /* تنسيق الزر */
+  button {
+    grid-column: span 2;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
