@@ -9,34 +9,33 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);  // To track if the login is successful
 
-  // التحقق من صحة البريد الإلكتروني
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // التحقق من صحة كلمة المرور
   const validatePassword = (password) => {
     return password.length >= 6;
   };
 
   const handleLogin = () => {
-    // إعادة تعيين الرسائل السابقة
     setError("");
     setIsEmailValid(true);
     setIsPasswordValid(true);
 
-    // التحقق من صحة البيانات
     if (!email || !password) {
       setError("Both email and password are required.");
       return;
     }
+
     if (!validateEmail(email)) {
       setIsEmailValid(false);
       setError("Please enter a valid email.");
       return;
     }
+
     if (!validatePassword(password)) {
       setIsPasswordValid(false);
       setError("Password must be at least 6 characters.");
@@ -45,11 +44,17 @@ const Login = () => {
 
     setLoading(true);
 
-    // محاكاة عملية تسجيل الدخول (يمكنك استبدالها بطلب حقيقي)
     setTimeout(() => {
       console.log("Logging in with:", email, password);
       setLoading(false);
-      // يمكن إضافة عملية التوجيه أو التعامل مع النتيجة هنا بعد تسجيل الدخول
+
+      if (email === "user@example.com" && password === "password123") {
+        setIsAuthenticated(true);
+        console.log("Access granted - Main Page");
+      } else {
+        setError("Incorrect Username and Password.");
+        setIsAuthenticated(false);
+      }
     }, 1000);
   };
 
@@ -57,8 +62,7 @@ const Login = () => {
     <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
       <h1>Login</h1>
       {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
-      
-      {/* إدخال البريد الإلكتروني */}
+
       <InputField
         label="Email"
         type="email"
@@ -69,8 +73,7 @@ const Login = () => {
         required
         isValid={isEmailValid}
       />
-      
-      {/* إدخال كلمة المرور */}
+
       <InputField
         label="Password"
         type="password"
@@ -82,14 +85,16 @@ const Login = () => {
         isValid={isPasswordValid}
       />
 
-      {/* الزر لتسجيل الدخول */}
       <Button
         label={loading ? "Logging in..." : "Login"}
         onClick={handleLogin}
         disabled={loading}
       />
+
+      {isAuthenticated && <div style={{ color: "green", marginTop: "20px" }}>Access granted! Redirecting to main page...</div>}
     </div>
   );
 };
 
 export default Login;
+
