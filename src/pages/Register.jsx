@@ -14,17 +14,17 @@ const Register = () => {
     password: "",
   });
 
+  const [isSubmitted, setIsSubmitted] = useState(false);  
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // التحقق من صحة البريد الإلكتروني
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // التحقق من صحة المدخلات
   const validateForm = () => {
     let formErrors = {};
     let isValid = true;
@@ -52,8 +52,10 @@ const Register = () => {
     e.preventDefault();
 
     if (validateForm()) {
+      setIsSubmitted(true);
       console.log("Form Submitted", formData);
-      // هنا يمكن إضافة منطق تسجيل الحساب (مثل إرسال البيانات إلى الخادم)
+    } else {
+      setIsSubmitted(false);
     }
   };
 
@@ -100,6 +102,11 @@ const Register = () => {
         <button type="submit" className="register__button">Sign Up</button>
         <a href="/login" className="register__link">Already have an account? Log in</a>
       </form>
+
+      {isSubmitted && <div className="register__message success">Account created successfully!</div>}
+      {!isSubmitted && Object.values(errors).some((error) => error) && (
+        <div className="register__message error">There are errors in the form. Please correct them.</div>
+      )}
     </div>
   );
 };
