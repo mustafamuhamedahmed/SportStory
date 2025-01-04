@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom"; // استيراد useNavigate
 import ProductCard from "../components/ProductCard";
 
 const Shop = () => {
   const [cart, setCart] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");  // حالة البحث
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate(); // تعريف التنقل
 
   const products = [
     { id: 1, name: "Nike Shoes", price: 120, image: "/assets/images/nike-shoes.jpg" },
@@ -12,7 +14,6 @@ const Shop = () => {
     { id: 4, name: "Reebok Shorts", price: 35, image: "/assets/images/reebok-shorts.jpg" }
   ];
 
-  // دالة لإضافة منتج إلى السلة
   const addToCart = useCallback((product) => {
     setCart((prevCart) => {
       const productExists = prevCart.some((item) => item.id === product.id);
@@ -25,64 +26,62 @@ const Shop = () => {
     });
   }, []);
 
-  // دالة لإزالة منتج من السلة
   const removeFromCart = useCallback((productId) => {
     setCart((prevCart) => prevCart.filter((product) => product.id !== productId));
   }, []);
 
-  // حساب السعر الإجمالي للسلة
   const totalPrice = cart.reduce((total, product) => total + product.price, 0);
 
-  // تصفية المنتجات بناءً على نص البحث
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // دالة للتنقل إلى صفحة تفاصيل المنتج
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}`); // تحويل إلى صفحة المنتج مع تمرير ID
+  };
+
   return (
     <div>
       <h1>Shop</h1>
-      
-      {/* حقل البحث */}
       <div className="search-container">
         <input
           type="text"
           placeholder="Search for products..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}  // تحديث حالة البحث
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-
-      {/* عرض المنتجات بناءً على البحث */}
       <div className="product-grid">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               name={product.name}
               price={product.price}
               image={product.image}
               onAddToCart={() => addToCart(product)}
+              onProductClick={() => handleProductClick(product.id)} // إضافة حدث النقر
             />
           ))
         ) : (
-          <p>No products found</p>  // رسالة في حالة عدم وجود نتائج بحث
+          <p>No products found</p>
         )}
       </div>
-
-      {/* عرض السلة */}
       <div>
         <h2>Cart</h2>
         {cart.length > 0 ? (
           <ul>
             {cart.map((product) => (
               <li key={product.id}>
-                {product.name} 
+                {product.name}
                 <button onClick={() => removeFromCart(product.id)}>Remove</button>
               </li>
             ))}
           </ul>
         ) : (
-          <p>Your cart is empty</p> // رسالة عندما تكون السلة فارغة
+          <p>Your cart is empty</p>
         )}
         <p>Total: ${totalPrice}</p>
       </div>
@@ -91,3 +90,4 @@ const Shop = () => {
 };
 
 export default Shop;
+
