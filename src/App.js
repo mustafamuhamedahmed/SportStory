@@ -17,6 +17,7 @@ import Payment from "./pages/Payment";
 import PostCoupons from "./pages/PostCoupons";
 import Checkout from "./pages/Checkout";
 import About from "./pages/About";
+import { ToastContainer } from 'react-toastify'; // استيراد ToastContainer
 
 import "./styles/global.css";
 import "./styles/variables.css";
@@ -55,12 +56,12 @@ const App = () => {
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/post-coupons" element={<PostCoupons />} />
                 <Route path="/checkout" element={<Checkout />} />
-                <Route path="/About" element={<About />} />
-
+                <Route path="/about" element={<About />} /> {/* تم تعديل الحرف الكبير في "About" */}
               </Routes>
             </main>
             <Footer />
           </div>
+          <ToastContainer /> {/* إضافة ToastContainer في أسفل التطبيق */}
         </CartProvider>
       </AuthProvider>
     </Router>
