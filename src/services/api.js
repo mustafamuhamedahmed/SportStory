@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://api.example.com"; // غيّر هذا الرابط ليتناسب مع API الخاص بك
+const API_BASE_URL = "http://localhost:8080/api"; // غيّر هذا الرابط ليتناسب مع API الخاص بك
 
 export const get = async (endpoint, config = {}) => {
   try {
