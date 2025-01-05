@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const ProductDetailsPage = () => {
-  const { productId } = useParams();
+  const { productId } = useParams(); // الحصول على ID المنتج من الرابط
 
   // قائمة المنتجات مع المراجعات
   const products = [
@@ -27,28 +27,46 @@ const ProductDetailsPage = () => {
     },
     {
       id: 3,
-      name: "Puma Hat",
+      name: "Rugby Ball",
       price: 25,
-      description: "Stylish sports hat.",
-      image: "/assets/images/puma-hat.jpg",
+      description: "Durable and high-quality rugby ball.",
+      image: "/assets/images/rugby ball.jpg",
       reviews: []
     },
     {
       id: 4,
-      name: "Reebok Shorts",
+      name: "Tennis Racket",
       price: 35,
-      description: "Durable sports shorts.",
-      image: "/assets/images/reebok-shorts.jpg",
+      description: "Professional tennis racket.",
+      image: "/assets/images/tennis racket.jpg",
+      reviews: []
+    },
+    {
+      id: 5,
+      name: "Puma Hat",
+      price: 25,
+      description: "Trendy Puma cap for casual wear.",
+      image: "/assets/images/puma hat.jpg",
+      reviews: []
+    },
+    {
+      id: 6,
+      name: "Basketball",
+      price: 95,
+      description: "Official size basketball for games.",
+      image: "/assets/images/basketball.jpg",
       reviews: []
     }
   ];
 
+  // البحث عن المنتج بناءً على ID
   const product = products.find((p) => p.id === parseInt(productId));
   const [reviews, setReviews] = useState(product?.reviews || []);
   const [newReview, setNewReview] = useState("");
   const [reviewAuthor, setReviewAuthor] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // إذا لم يتم العثور على المنتج
   if (!product) {
     return <p>Product not found</p>;
   }
@@ -66,15 +84,18 @@ const ProductDetailsPage = () => {
       setReviewAuthor("");
       setSuccessMessage("Your review has been added successfully!");
       setTimeout(() => setSuccessMessage(""), 3000); // إخفاء الرسالة بعد 3 ثوانٍ
+    } else {
+      setSuccessMessage("Please provide both your name and review text.");
+      setTimeout(() => setSuccessMessage(""), 3000); // إخفاء الرسالة بعد 3 ثوانٍ
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <h1>{product.name}</h1>
       <img src={product.image} alt={product.name} style={{ maxWidth: "300px", display: "block", marginBottom: "20px" }} />
-      <p>Price: ${product.price}</p>
-      <p>{product.description}</p>
+      <p><strong>Price:</strong> ${product.price}</p>
+      <p><strong>Description:</strong> {product.description}</p>
 
       {/* قسم المراجعات */}
       <div style={{ marginTop: "30px" }}>
@@ -94,7 +115,7 @@ const ProductDetailsPage = () => {
         {/* إضافة مراجعة جديدة */}
         <div style={{ marginTop: "20px" }}>
           <h3>Add a Review</h3>
-          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+          {successMessage && <p style={{ color: successMessage.includes("added") ? "green" : "red" }}>{successMessage}</p>}
           <input
             type="text"
             value={reviewAuthor}
