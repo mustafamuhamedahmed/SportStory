@@ -1,18 +1,22 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom"; // استيراد useNavigate
 import ProductCard from "../components/ProductCard";
+import "./Shop.css";
 
 const Shop = () => {
   const [cart, setCart] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate(); // تعريف التنقل
 
-  const products = [
-    { id: 1, name: "Nike Shoes", price: 120, image: "/assets/images/nike-shoes.jpg" },
-    { id: 2, name: "Adidas T-Shirt", price: 40, image: "/assets/images/adidas-shirt.jpg" },
-    { id: 3, name: "Puma Hat", price: 25, image: "/assets/images/puma-hat.jpg" },
-    { id: 4, name: "Reebok Shorts", price: 35, image: "/assets/images/reebok-shorts.jpg" }
-  ];
+  // استخدام useMemo للمصفوفة الثابتة `products` مع إضافة تفاصيل إضافية
+  const products = useMemo(() => [
+    { id: 1, name: "Nike Shoes", price: 120, description: "High-quality running shoes from Nike.", image: "/assets/images/nike-shoes.jpg" },
+    { id: 2, name: "Adidas T-Shirt", price: 40, description: "Comfortable and stylish T-shirt by Adidas.", image: "/assets/images/adidas-shirt.jpg" },
+    { id: 3, name: "Rugby ball", price: 25, description: "Rugby ball.", image: "/assets/images/Rugby ball.jpg" },
+    { id: 4, name: "Tennis racket", price: 35, description: "Tennis racket.", image: "/assets/images/Tennis racket.jpg" },
+    { id: 5, name: "Puma Hat", price: 25, description: "Trendy Puma cap for casual wear.", image: "/assets/images/puma hat.jpg" },
+    { id: 6, name: "Basketball", price: 95, description: "Basketball.", image: "/assets/images/Basketball.jpg" }
+  ], []);
 
   const addToCart = useCallback((product) => {
     setCart((prevCart) => {
@@ -30,11 +34,15 @@ const Shop = () => {
     setCart((prevCart) => prevCart.filter((product) => product.id !== productId));
   }, []);
 
+  // حساب السعر الإجمالي
   const totalPrice = cart.reduce((total, product) => total + product.price, 0);
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // استخدام useMemo لتصفية المنتجات بناءً على البحث
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, products]);
 
   // دالة للتنقل إلى صفحة تفاصيل المنتج
   const handleProductClick = (productId) => {
@@ -60,6 +68,7 @@ const Shop = () => {
               id={product.id}
               name={product.name}
               price={product.price}
+              description={product.description}
               image={product.image}
               onAddToCart={() => addToCart(product)}
               onProductClick={() => handleProductClick(product.id)} // إضافة حدث النقر
@@ -90,4 +99,3 @@ const Shop = () => {
 };
 
 export default Shop;
-
