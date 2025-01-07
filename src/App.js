@@ -11,8 +11,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
-import Orders from "./pages/Orders"; // إضافة صفحة Orders
-import EditProfile from "./pages/EditProfile"; // صفحة لتعديل البيانات
+import Orders from "./pages/Orders";
+import EditProfile from "./pages/EditProfile";
 import Payment from "./pages/Payment";
 import PostCoupons from "./pages/PostCoupons";
 import Checkout from "./pages/Checkout";
@@ -49,14 +49,14 @@ const App = () => {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/admin" element={<Admin />} /> {/* تم تعديل المسار */}
+                <Route path="/admin" element={<Admin />} /> 
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/post-coupons" element={<PostCoupons />} />
                 <Route path="/checkout" element={<Checkout />} />
-                <Route path="/about" element={<About />} /> {/* تم تعديل الحرف الكبير في "About" */}
+                <Route path="/about" element={<About />} /> 
               </Routes>
             </main>
             <Footer />
