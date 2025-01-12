@@ -32,4 +32,17 @@
   h1, h2 {
     text-align: center;
   }
+  .add-all-btn {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .add-all-btn button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
   

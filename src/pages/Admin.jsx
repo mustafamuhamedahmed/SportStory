@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "./Admin.css";  
+import React, { useState, useEffect } from "react";
+import "./Admin.css";
 
 const Admin = () => {
   const [newProduct, setNewProduct] = useState({
@@ -12,6 +12,24 @@ const Admin = () => {
   const [products, setProducts] = useState([]);
   const [addError, setAddError] = useState(null);
   const [addSuccess, setAddSuccess] = useState(null);
+
+  // دالة لجلب المنتجات من API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("https://example.com/api/products");
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // دالة للتحقق من صحة البيانات المدخلة
   const validateProduct = () => {
@@ -26,7 +44,7 @@ const Admin = () => {
   };
 
   // دالة لإضافة منتج جديد
-  const handleAddProduct = (e) => {
+  const handleAddProduct = async (e) => {
     e.preventDefault();
     const validationError = validateProduct();
     if (validationError) {
@@ -38,13 +56,26 @@ const Admin = () => {
       setAddError(null);
       setAddSuccess(null);
 
-      // إضافة المنتج الجديد إلى قائمة المنتجات
-      setProducts((prevProducts) => [...prevProducts, newProduct]);
+      const response = await fetch("https://example.com/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newProduct),
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to add product");
+      }
+
+      const addedProduct = await response.json();
+
+      // تحديث قائمة المنتجات مع المنتج الجديد
+      setProducts((prevProducts) => [...prevProducts, addedProduct]);
       setAddSuccess("Product added successfully!");
       setNewProduct({ id: "", name: "", price: "", category: "", description: "" });
     } catch (error) {
-      setAddError("Failed to add product");
+      setAddError(error.message || "Failed to add product");
     }
   };
 

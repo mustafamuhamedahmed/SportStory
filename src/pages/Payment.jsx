@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import "./Payment.css"; // إذا كنت تحتاج إلى ملف CSS مخصص
+import { useLocation, useNavigate } from "react-router-dom";
+import "./Payment.css"; // إذا كنت بحاجة إلى إضافة ملف CSS مخصص
 
 const Payment = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   // حالة تخزين بيانات الدفع
   const [paymentData, setPaymentData] = useState({
     name: "",
@@ -15,6 +19,9 @@ const Payment = () => {
 
   // حالة المعالجة
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // حالة تخزين السلة والمبلغ الإجمالي
+  const { cart = [], totalPrice = 0 } = location.state || {};
 
   // دالة لمعالجة التغيير في الحقول
   const handleChange = (e) => {
@@ -68,8 +75,8 @@ const Payment = () => {
     }
 
     try {
-      // إضافة معالجة الدفع عبر API هنا (Stripe/PayPal أو API مخصص)
-      // استبدل هذا بكود الاتصال الفعلي بـ API.
+      // هنا يمكنك إضافة معالجة الدفع عبر API (Stripe/PayPal أو API مخصص)
+      // استبدل هذا بالكود الفعلي للاتصال بـ API.
       const response = await fetch("https://api.example.com/payment", {
         method: "POST",
         headers: {
@@ -97,6 +104,17 @@ const Payment = () => {
       <h1>Payment</h1>
 
       <form onSubmit={handleSubmit} className="payment-form">
+        <div>
+          <h3>Total Amount: ${totalPrice.toFixed(2)}</h3>
+          <ul>
+            {cart.map((item, index) => (
+              <li key={index}>
+                <span>{item.name}</span> - ${item.price.toFixed(2)} × {item.quantity}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <input
           type="text"
           name="name"

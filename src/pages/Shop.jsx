@@ -1,57 +1,59 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom"; // استيراد useNavigate
 import ProductCard from "../components/ProductCard";
 import "./Shop.css";
 
 const Shop = () => {
-  const [cart, setCart] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate(); // تعريف التنقل
+  const [cart, setCart] = useState([]); // سلة المشتريات
+  const [searchQuery, setSearchQuery] = useState(""); // إدارة البحث
+  const [categoryFilter, setCategoryFilter] = useState(""); // فلتر الفئات
+  const [priceRange, setPriceRange] = useState([0, 200]); // فلتر السعر
+  const navigate = useNavigate(); // التنقل بين الصفحات
 
-  // استخدام useMemo للمصفوفة الثابتة `products` مع إضافة تفاصيل إضافية
+  // بيانات المنتجات الثابتة
   const products = useMemo(() => [
-    { id: 1, name: "Nike Shoes", price: 120, description: "High-quality running shoes from Nike.", image: "/assets/images/nike-shoes.jpg" },
-    { id: 2, name: "Adidas T-Shirt", price: 40, description: "Comfortable and stylish T-shirt by Adidas.", image: "/assets/images/adidas-shirt.jpg" },
-    { id: 3, name: "Rugby ball", price: 25, description: "Rugby ball.", image: "/assets/images/Rugby ball.jpg" },
-    { id: 4, name: "Tennis racket", price: 35, description: "Tennis racket.", image: "/assets/images/Tennis racket.jpg" },
-    { id: 5, name: "Puma Hat", price: 25, description: "Trendy Puma cap for casual wear.", image: "/assets/images/puma hat.jpg" },
-    { id: 6, name: "Basketball", price: 95, description: "Basketball.", image: "/assets/images/Basketball.jpg" }
+    { id: 1, name: "Nike Shoes", price: 120, description: "High-quality running shoes from Nike.", image: "/assets/images/nike-shoes.jpg", category: "Shoes" },
+    { id: 2, name: "Adidas T-Shirt", price: 40, description: "Comfortable and stylish T-shirt by Adidas.", image: "/assets/images/adidas-shirt.jpg", category: "Clothing" },
+    { id: 3, name: "Rugby ball", price: 25, description: "Rugby ball.", image: "/assets/images/Rugby ball.jpg", category: "Sports" },
+    { id: 4, name: "Tennis racket", price: 35, description: "Tennis racket.", image: "/assets/images/Tennis racket.jpg", category: "Sports" },
+    { id: 5, name: "Puma Hat", price: 25, description: "Trendy Puma cap for casual wear.", image: "/assets/images/puma hat.jpg", category: "Clothing" },
+    { id: 6, name: "Basketball", price: 95, description: "Basketball.", image: "/assets/images/Basketball.jpg", category: "Sports" }
   ], []);
 
+  // إضافة منتج إلى السلة
   const addToCart = useCallback((product) => {
     setCart((prevCart) => {
+      // تحقق من وجود المنتج في السلة بالفعل
       const productExists = prevCart.some((item) => item.id === product.id);
       if (!productExists) {
-        console.log(`${product.name} added to cart!`);
-        return [...prevCart, product];
+        const updatedCart = [...prevCart, { ...product, quantity: 1 }];
+        return updatedCart;
       }
-      console.log(`${product.name} is already in the cart.`);
-      return prevCart;
+      return prevCart; // إذا كان موجودًا بالفعل لا تضيفه مرة أخرى
     });
   }, []);
 
-  const removeFromCart = useCallback((productId) => {
-    setCart((prevCart) => prevCart.filter((product) => product.id !== productId));
-  }, []);
-
-  // حساب السعر الإجمالي
-  const totalPrice = cart.reduce((total, product) => total + product.price, 0);
-
-  // استخدام useMemo لتصفية المنتجات بناءً على البحث
+  // تصفية المنتجات بناءً على البحث والفئة والسعر
   const filteredProducts = useMemo(() => {
-    return products.filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, products]);
+    return products.filter((product) => {
+      const matchesCategory = categoryFilter ? product.category === categoryFilter : true;
+      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+      const matchesSearchQuery = product.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-  // دالة للتنقل إلى صفحة تفاصيل المنتج
-  const handleProductClick = (productId) => {
-    navigate(`/products/${productId}`); // تحويل إلى صفحة المنتج مع تمرير ID
+      return matchesCategory && matchesPrice && matchesSearchQuery;
+    });
+  }, [searchQuery, categoryFilter, priceRange, products]);
+
+  // دالة لانتقال المستخدم إلى صفحة السلة بعد إضافة المنتجات
+  const goToCart = () => {
+    navigate("/cart", { state: { cart } });
   };
 
   return (
     <div>
       <h1>Shop</h1>
+
+      {/* خانة البحث */}
       <div className="search-container">
         <input
           type="text"
@@ -60,6 +62,27 @@ const Shop = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+
+      {/* فلتر الفئات ونطاق السعر */}
+      <div className="filter-container">
+        <select onChange={(e) => setCategoryFilter(e.target.value)} value={categoryFilter}>
+          <option value="">All Categories</option>
+          <option value="Shoes">Shoes</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Sports">Sports</option>
+        </select>
+
+        <input
+          type="range"
+          min="0"
+          max="200"
+          value={priceRange[1]}
+          onChange={(e) => setPriceRange([0, e.target.value])}
+        />
+        <span>Price: ${priceRange[0]} - ${priceRange[1]}</span>
+      </div>
+
+      {/* عرض المنتجات */}
       <div className="product-grid">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
@@ -69,33 +92,48 @@ const Shop = () => {
               name={product.name}
               price={product.price}
               description={product.description}
-              image={product.image}
-              onAddToCart={() => addToCart(product)}
-              onProductClick={() => handleProductClick(product.id)} // إضافة حدث النقر
+              image={product.image || "/assets/images/default.jpg"}
+              onAddToCart={() => addToCart(product)} // إضافة المنتج للسلة
             />
           ))
         ) : (
           <p>No products found</p>
         )}
       </div>
+
+      {/* إضافة زر لإضافة جميع المنتجات إلى السلة إذا كانت هناك منتجات معروضة */}
+      {filteredProducts.length > 0 && (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button 
+            onClick={() => {
+              filteredProducts.forEach((product) => addToCart(product));
+              goToCart(); // الانتقال إلى صفحة السلة بعد إضافة المنتجات
+            }}
+            style={{ padding: "10px 20px", backgroundColor: "#007BFF", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
+          >
+            Add All Products to Cart
+          </button>
+        </div>
+      )}
+
+      {/* عرض السلة */}
       <div>
         <h2>Cart</h2>
         {cart.length > 0 ? (
           <ul>
             {cart.map((product) => (
               <li key={product.id}>
-                {product.name}
-                <button onClick={() => removeFromCart(product.id)}>Remove</button>
+                {product.name} - ${product.price}
               </li>
             ))}
           </ul>
         ) : (
           <p>Your cart is empty</p>
         )}
-        <p>Total: ${totalPrice}</p>
       </div>
     </div>
   );
 };
 
 export default Shop;
+

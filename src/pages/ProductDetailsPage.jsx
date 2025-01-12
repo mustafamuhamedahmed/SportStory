@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // إضافة useNavigate
 
 const ProductDetailsPage = () => {
   const { productId } = useParams(); // الحصول على ID المنتج من الرابط
+  const navigate = useNavigate(); // تعريف التنقل بين الصفحات
 
-  // قائمة المنتجات مع المراجعات
+  // قائمة المنتجات
   const products = [
     {
       id: 1,
@@ -59,8 +60,7 @@ const ProductDetailsPage = () => {
     }
   ];
 
-  // البحث عن المنتج بناءً على ID
-  const product = products.find((p) => p.id === parseInt(productId));
+  const product = products.find((p) => p.id === parseInt(productId)); // البحث عن المنتج
   const [reviews, setReviews] = useState(product?.reviews || []);
   const [newReview, setNewReview] = useState("");
   const [reviewAuthor, setReviewAuthor] = useState("");
@@ -70,6 +70,11 @@ const ProductDetailsPage = () => {
   if (!product) {
     return <p>Product not found</p>;
   }
+
+  // دالة لإضافة المنتج إلى السلة والانتقال إليها
+  const handleAddToCart = () => {
+    navigate("/cart", { state: { cart: [product] } });
+  };
 
   // إضافة مراجعة جديدة
   const handleAddReview = () => {
@@ -96,6 +101,20 @@ const ProductDetailsPage = () => {
       <img src={product.image} alt={product.name} style={{ maxWidth: "300px", display: "block", marginBottom: "20px" }} />
       <p><strong>Price:</strong> ${product.price}</p>
       <p><strong>Description:</strong> {product.description}</p>
+      <button
+        onClick={handleAddToCart}
+        style={{
+          marginTop: "10px",
+          padding: "10px 20px",
+          backgroundColor: "#28a745",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
+        Add to Cart
+      </button>
 
       {/* قسم المراجعات */}
       <div style={{ marginTop: "30px" }}>
@@ -103,7 +122,7 @@ const ProductDetailsPage = () => {
         {reviews.length > 0 ? (
           <ul>
             {reviews.map((review) => (
-              <li key={review.id} style={{ marginBottom: "10px" }}>
+              <li key={review.id} style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}>
                 <strong>{review.author}:</strong> {review.text}
               </li>
             ))}
@@ -121,14 +140,14 @@ const ProductDetailsPage = () => {
             value={reviewAuthor}
             onChange={(e) => setReviewAuthor(e.target.value)}
             placeholder="Your name"
-            style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+            style={{ width: "100%", marginBottom: "10px", padding: "8px", borderRadius: "5px" }}
           />
           <textarea
             value={newReview}
             onChange={(e) => setNewReview(e.target.value)}
             placeholder="Write your review here..."
             rows="4"
-            style={{ width: "100%", resize: "none", padding: "8px" }}
+            style={{ width: "100%", resize: "none", padding: "8px", borderRadius: "5px" }}
           ></textarea>
           <button
             onClick={handleAddReview}
@@ -138,7 +157,8 @@ const ProductDetailsPage = () => {
               backgroundColor: "#007BFF",
               color: "#fff",
               border: "none",
-              cursor: "pointer"
+              cursor: "pointer",
+              borderRadius: "5px"
             }}
           >
             Submit Review

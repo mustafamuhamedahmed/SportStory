@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "./Checkout.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./Checkout.css"; // إذا كنت بحاجة إلى تنسيق مخصص
 
 // دالة للتحقق من صحة البيانات
 const validateForm = (formData) => {
@@ -20,36 +21,18 @@ const validateForm = (formData) => {
 };
 
 const Checkout = () => {
-  const cartItems = [
-    {
-      id: 1,
-      name: "Running Shoes",
-      price: 100,
-      quantity: 1,
-      image: "https://via.placeholder.com/100",
-    },
-    {
-      id: 2,
-      name: "Fitness T-Shirt",
-      price: 50,
-      quantity: 2,
-      image: "https://via.placeholder.com/100",
-    },
-  ];
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { cart, totalPrice } = location.state || { cart: [], totalPrice: 0 };
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-
-  // إدارة الحالة للنموذج
+  // إدارة حالة النموذج
   const [formData, setFormData] = useState({
     name: "",
     address: "",
     email: "",
     phone: "",
   });
-  
+
   // إدارة الأخطاء
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,94 +54,90 @@ const Checkout = () => {
     // محاكاة عملية إرسال الطلب
     setIsSubmitting(true);
     setTimeout(() => {
-      console.log("Order Submitted:", { formData, cartItems });
+      console.log("Order Submitted:", { formData, cart });
       alert("Your order has been placed successfully!");
       setIsSubmitting(false);
       setFormData({ name: "", address: "", email: "", phone: "" }); // إعادة تعيين النموذج
+      navigate("/payment", { state: { cart, totalPrice } }); // الانتقال إلى صفحة الدفع
     }, 2000); // محاكاة عملية الدفع
   };
 
   return (
-    <div className="checkout">
-      <h1 className="checkout__title">Checkout</h1>
-
-      <div className="checkout__container">
-        {/* قسم المنتجات */}
-        <div className="checkout__cart">
-          <h2>Order Summary</h2>
-          {cartItems.map((item) => (
-            <div key={item.id} className="checkout__cart-item">
-              <img src={item.image} alt={item.name} />
+    <div className="checkout-container">
+      <h1>{cart.length > 0 ? "Checkout" : "Your Cart is Empty"}</h1>
+      {cart.length > 0 ? (
+        <>
+          <p>Please review your order before proceeding to payment.</p>
+          <ul className="checkout-cart-list">
+            {cart.map((product) => (
+              <li key={product.id} className="checkout-cart-item">
+                <div className="checkout-item-details">
+                  <h3>{product.name}</h3>
+                  <p>Price: ${product.price.toFixed(2)}</p>
+                  <p>Quantity: {product.quantity}</p>
+                </div>
+                <div className="checkout-item-total">
+                  <p>Total: ${(product.price * product.quantity).toFixed(2)}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="checkout-summary">
+            <p>Total Price: ${totalPrice.toFixed(2)}</p>
+            <form onSubmit={handleSubmit} className="checkout-form">
               <div>
-                <h3>{item.name}</h3>
-                <p>Quantity: {item.quantity}</p>
-                <p>${item.price * item.quantity}</p>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Full Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.name && <p className="error-message">{errors.name}</p>}
               </div>
-            </div>
-          ))}
-          <div className="checkout__total">
-            <h3>Total: ${totalPrice}</h3>
+              <div>
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="Address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.address && <p className="error-message">{errors.address}</p>}
+              </div>
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.email && <p className="error-message">{errors.email}</p>}
+              </div>
+              <div>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone Number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                />
+                {errors.phone && <p className="error-message">{errors.phone}</p>}
+              </div>
+              <button type="submit" disabled={isSubmitting} className="checkout-button">
+                {isSubmitting ? "Processing..." : "Place Order"}
+              </button>
+            </form>
           </div>
-        </div>
-
-        {/* قسم تفاصيل الشحن */}
-        <div className="checkout__form">
-          <h2>Shipping Details</h2>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              {errors.name && <p className="error-message">{errors.name}</p>}
-            </div>
-
-            <div>
-              <input
-                type="text"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-              />
-              {errors.address && <p className="error-message">{errors.address}</p>}
-            </div>
-
-            <div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              {errors.email && <p className="error-message">{errors.email}</p>}
-            </div>
-
-            <div>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Phone Number"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-              {errors.phone && <p className="error-message">{errors.phone}</p>}
-            </div>
-
-            <button type="submit" className="checkout__button" disabled={isSubmitting}>
-              {isSubmitting ? "Processing..." : "Place Order"}
-            </button>
-          </form>
-        </div>
-      </div>
+        </>
+      ) : (
+        <p>Your cart is empty. Please go back and add items to your cart.</p>
+      )}
     </div>
   );
 };

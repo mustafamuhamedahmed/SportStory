@@ -4,7 +4,7 @@ const About = () => {
   return (
     <div className="about-page">
       <header>
-        <h1>About us</h1>
+        <h1>About Us</h1>
         <p>Welcome to SportsShop! Your ultimate destination for all things sports-related.</p>
       </header>
 
@@ -48,11 +48,11 @@ const About = () => {
         <p>Our team consists of sports enthusiasts who are dedicated to helping you achieve your fitness goals.</p>
         <div className="team-members">
           <div className="team-member">
-            <img src="https://via.placeholder.com/150" alt="Team Member" />
+            <img src="https://via.placeholder.com/150" alt="Mustafa Mohammed - Founder" />
             <p>Mustafa Mohammed - Founder</p>
           </div>
           <div className="team-member">
-            <img src="https://via.placeholder.com/150" alt="Team Member" />
+            <img src="https://via.placeholder.com/150" alt="Hussein - Marketing Lead" />
             <p>Hussein - Marketing Lead</p>
           </div>
         </div>
